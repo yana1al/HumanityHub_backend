@@ -1,12 +1,19 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const happyHourController = require('../controllers/happyHourController');
+const HappyHour = require("../models/HappyHour");
 
-// Define routes for CRUD operations
-router.get('/', happyHourController.getAllHappyHours);
-router.get('/:id', happyHourController.getHappyHourById);
-router.post('/', happyHourController.createHappyHour);
-router.put('/:id', happyHourController.updateHappyHour);
-router.delete('/:id', happyHourController.deleteHappyHour);
+// GET Happy Hour details by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const happyHour = await HappyHour.findById(req.params.id);
+    if (!happyHour) {
+      return res.status(404).json({ message: "Happy Hour not found" });
+    }
+    res.json(happyHour);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 
 module.exports = router;

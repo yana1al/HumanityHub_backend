@@ -21,17 +21,15 @@ const createToken = (payload) => {
 };
 
 const verifyToken = (req, res, next) => {
-  const { token } = res.locals;
+  const token = req.header('auth-token');
+  if (!token) return res.status(401).send('Access Denied');
+
   try {
-    let payload = jwt.verify(token, APP_SECRET);
-    if (payload) {
-      res.locals.payload = payload;
-      return next();
-    }
-    res.status(401).send("Unauthorized");
-  } catch (e) {
-    console.error(e);
-    res.status(401).send("Verify Token Error");
+    const verified = jwt.verify(token, APP_SECRET);
+    req.user = verified;
+    next();
+  } catch (err) {
+    res.status(400).send('Invalid Token');
   }
 };
 
