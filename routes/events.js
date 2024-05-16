@@ -1,7 +1,7 @@
 const express = require('express');
-const axios = require('axios');
+
 const router = express.Router();
-const Event = require('./models/event'); // Assuming you have a Mongoose model for events
+
 
 // Route to create an event
 router.post('/', async (req, res) => {
