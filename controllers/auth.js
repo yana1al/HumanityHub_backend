@@ -90,6 +90,16 @@ const googleLogin = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.APP_SECRET, {
       expiresIn: '30m',
     });
+    const passport = require('passport');
+
+// Google OAuth login controller
+exports.googleLogin = passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] });
+
+// Google OAuth callback controller
+exports.googleLoginCallback = passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+  // Successful authentication, redirect to a success page or return JWT token
+  res.redirect('/');
+};
 
     res.status(200).json({ token });
   } catch (error) {
