@@ -1,6 +1,7 @@
 
 const express = require("express");
 const Donation = require("../models/Donation");
+const stripe = require("stripe")("rk_test_51PGOC106R1SUboG0ob27UKItDgwi5JrpL5M5OuBkEoEZoN2x3L5Y1FjKsEKaIg8H1LD5SG9fUOwWHbJJjzJ63823005gRvhwDn");
 
 
 exports.getDonations = async (req, res) => {
