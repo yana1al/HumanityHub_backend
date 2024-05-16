@@ -20,6 +20,7 @@ app.use(morgan("dev"));
 app.use("/auth", authRouter);
 app.use("/donations", donationsRouter);
 app.use("/events", eventsRouter);
+app.use('/api/events', eventsRouter);
 app.use('/api/donations', donationsRouter);
 
 app.listen(PORT, () => console.log(`listening on PORT ${PORT}`));
