@@ -1,24 +1,42 @@
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+require('dotenv').config();
+
 passport.use(new GoogleStrategy({
-    clientID: GOOGLE_CLIENT_ID,
-    clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: 'https://humanity-hub1-3599a88da879.herokuapp.com/oauth2callback'
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK,
   },
-  (accessToken, done) => {
+  (accessToken, refreshToken, profile, done) => {
+    
+    const user = { 
+      googleId: profile.id, 
+      name: profile.displayName, 
+      email: profile.emails[0].value,
+      accessToken: accessToken,
+      refreshToken: refreshToken
+    };
+    
     
     const { google } = require('googleapis');
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({ access_token: accessToken });
-
-    
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     oauth2.userinfo.get((err, response) => {
       if (err) {
         return done(err);
       }
-
-      const userData = response.data;
-      
-      done(null, userData);
+    
     });
+
+    return done(null, user);
   }
 ));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
