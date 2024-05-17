@@ -9,4 +9,11 @@ router.post("/login", Login);
 // Google OAuth login route
 router.post("/google-login", googleLogin);
 
+router.get("/google", (req, res) => {
+    res.json({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      redirectUri: process.env.GOOGLE_CALLBACK,
+    });
+  });
+
 module.exports = router;
