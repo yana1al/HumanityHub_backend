@@ -58,7 +58,7 @@ const Login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.APP_SECRET, {
+    const token = jwt.sign({ userId: user._id }, process.env.GOOGLE_CLIENT_SECRET, {
       expiresIn: "30m",
     });
 
