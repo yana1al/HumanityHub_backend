@@ -19,7 +19,7 @@ router.get("/oauth2callback",
   }
 );
 
-router.get("/google", (req, res) => {
+router.get("/google", (res) => {
     res.json({
       clientId: process.env.GOOGLE_CLIENT_ID,
       redirectUri: process.env.GOOGLE_CALLBACK,
