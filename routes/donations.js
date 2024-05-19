@@ -19,18 +19,17 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/donation-locations', async (req, res) => {
+router.get('/donations', async (req, res) => {
     const { zipCode } = req.query;
   
     try {
-      // Make a request to the Google Maps Places API
-      const response = await axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=donation+locations+${zipCode}&key=YOUR_API_KEY`);
-  
-      
+      const response = await axios.get(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=donation+locations+${zipCode}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`);
       const locations = response.data.results.map((result) => ({
         name: result.name,
         address: result.formatted_address,
-        
+        latitude: result.geometry.location.lat,
+        longitude: result.geometry.location.lng,
+        id: result.place_id,
       }));
   
       res.json(locations);
@@ -39,5 +38,6 @@ router.get('/donation-locations', async (req, res) => {
       res.status(500).json({ error: 'Failed to search for donation locations' });
     }
   });
+  
 
 module.exports = router;
