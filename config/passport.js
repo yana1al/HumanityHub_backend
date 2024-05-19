@@ -7,29 +7,30 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK,
   },
-  (accessToken, refreshToken, profile, done) => {
-    
-    const user = { 
-      googleId: profile.id, 
-      name: profile.displayName, 
-      email: profile.emails[0].value,
-      accessToken: accessToken,
-      refreshToken: refreshToken
-    };
-    
-    
-    const { google } = require('googleapis');
-    const oauth2Client = new google.auth.OAuth2();
-    oauth2Client.setCredentials({ access_token: accessToken });
-    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
-    oauth2.userinfo.get((err, response) => {
-      if (err) {
-        return done(err);
-      }
-    
-    });
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      // Create user object
+      const user = {
+        googleId: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
 
-    return done(null, user);
+      // Optionally fetch additional user info if needed
+      const { google } = require('googleapis');
+      const oauth2Client = new google.auth.OAuth2();
+      oauth2Client.setCredentials({ access_token: accessToken });
+      const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+      
+      const response = await oauth2.userinfo.get();
+      user.profile = response.data;
+
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
   }
 ));
 
@@ -40,3 +41,5 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
+
+module.exports = passport;
