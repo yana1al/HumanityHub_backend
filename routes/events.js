@@ -33,4 +33,37 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Route to update an event by ID
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    try {
+        const updatedEvent = await Event.findByIdAndUpdate(id, updateData, { new: true });
+        if (!updatedEvent) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+        res.json({ message: 'Event updated successfully', event: updatedEvent });
+    } catch (error) {
+        console.error('Error updating event:', error);
+        res.status(500).json({ error: 'Failed to update event' });
+    }
+});
+
+// Route to delete an event by ID
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedEvent = await Event.findByIdAndDelete(id);
+        if (!deletedEvent) {
+            return res.status(404).json({ error: 'Event not found' });
+        }
+        res.json({ message: 'Event deleted successfully', event: deletedEvent });
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ error: 'Failed to delete event' });
+    }
+});
+
 module.exports = router;
