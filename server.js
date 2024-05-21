@@ -37,9 +37,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRouter);
-app.use("/donations", donationsRouter);
 app.use('/api/testimonies', testimoniesRouter);
-app.use("/events", eventsRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/donations', donationsRouter);
 

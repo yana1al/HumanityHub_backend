@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { Testimony } = require('../models/Testimony');
+const { Testimony } = require('../models/Testimonial');
 const { verifyToken, stripToken } = require('../middleware/auth');
 
 
