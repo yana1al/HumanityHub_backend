@@ -1,19 +1,14 @@
 const express = require('express');
-
+const Event = require('../models/Event'); // Import the Event model
 const router = express.Router();
-
 
 // Route to create an event
 router.post('/', async (req, res) => {
     const eventData = req.body;
 
     try {
-        // Create a new event using the provided data
         const newEvent = new Event(eventData);
-        
-        // Save the event to the database
         await newEvent.save();
-
         res.json({ message: 'Event created successfully', event: newEvent });
     } catch (error) {
         console.error('Error creating event:', error);
@@ -26,10 +21,11 @@ router.get('/', async (req, res) => {
     const { zipCode, city } = req.query;
 
     try {
-        // Fetch events from the database based on zip code and city
-        const events = await Event.find({ zipCode, city });
+        const query = {};
+        if (zipCode) query['location.zipCode'] = zipCode;
+        if (city) query['location.city'] = city;
 
-        // Send the events data to the frontend
+        const events = await Event.find(query);
         res.json(events);
     } catch (error) {
         console.error('Error fetching events:', error);

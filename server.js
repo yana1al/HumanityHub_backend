@@ -7,13 +7,16 @@ const cors = require("cors");
 const morgan = require("morgan");
 const session = require('express-session');
 const passport = require('passport');
-const testimonyRoutes = require('./routes/testimonies');
+
+
 
 require('./config/passport'); 
 
 const authRouter = require("./routes/auth");
 const donationsRouter = require("./routes/donations");
 const eventsRouter = require("./routes/events");
+const testimoniesRouter = require("./routes/testimonies");
+
 
 const app = express();
 
@@ -35,7 +38,7 @@ app.use(passport.session());
 
 app.use("/auth", authRouter);
 app.use("/donations", donationsRouter);
-app.use('/api/testimonies', testimonyRoutes);
+app.use('/api/testimonies', testimoniesRouter);
 app.use("/events", eventsRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/donations', donationsRouter);
