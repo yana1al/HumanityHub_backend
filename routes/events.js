@@ -19,7 +19,10 @@ router.post('/', async (req, res) => {
 // Route to search/view events based on zip code and city
 router.get('/', async (req, res) => {
     const { zipCode, city } = req.query;
-
+    let query = {};
+    if (zipCode) query.zipCode = zipCode;
+    if (city) query.city = city;
+  
     try {
         const query = {};
         if (zipCode) query['location.zipCode'] = zipCode;
