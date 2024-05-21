@@ -1,29 +1,27 @@
-
 const express = require('express');
 const router = express.Router();
-const { Testimony } = require('../models/Testimonial');
-const { verifyToken, stripToken } = require('../middleware/auth');
+const Testimony = require('../models/Testimony');
 
+// Fetch all testimonies
+router.get('/', async (req, res) => {
+  try {
+    const testimonies = await Testimony.findAll();
+    res.json(testimonies);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch testimonies' });
+  }
+});
 
-router.get('/', async (req, res) => { // Added req as a parameter
-    try {
-      const testimonies = await Testimony.findAll();
-      res.json(testimonies);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch testimonies' });
-    }
-  });
-
-
-router.post('/', stripToken, verifyToken, async (req, res) => {
-  const { name, testimony, rating, donatedAmount } = req.body;
+// Create a new testimony
+router.post('/', async (req, res) => {
+  const { name, testimony, rating, donatedAmount, userId } = req.body;
   try {
     const newTestimony = await Testimony.create({
       name,
       testimony,
       rating,
       donatedAmount,
-      userId: req.user.id 
+      userId,  
     });
     res.status(201).json(newTestimony);
   } catch (error) {
@@ -31,10 +29,10 @@ router.post('/', stripToken, verifyToken, async (req, res) => {
   }
 });
 
-
-router.put('/:id', stripToken, verifyToken, async (req, res) => {
+// Update an existing testimony
+router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, testimony, rating, donatedAmount } = req.body;
+  const { name, testimony, rating, donatedAmount, userId } = req.body;
   
   try {
     const existingTestimony = await Testimony.findByPk(id);
@@ -43,15 +41,11 @@ router.put('/:id', stripToken, verifyToken, async (req, res) => {
       return res.status(404).json({ error: 'Testimony not found' });
     }
 
-    
-    if (existingTestimony.userId !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Access forbidden' });
-    }
-
     existingTestimony.name = name;
     existingTestimony.testimony = testimony;
     existingTestimony.rating = rating;
     existingTestimony.donatedAmount = donatedAmount;
+    existingTestimony.userId = userId;
     await existingTestimony.save();
 
     res.json(existingTestimony);
@@ -61,7 +55,7 @@ router.put('/:id', stripToken, verifyToken, async (req, res) => {
 });
 
 // Delete a testimony
-router.delete('/:id', stripToken, verifyToken, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -69,11 +63,6 @@ router.delete('/:id', stripToken, verifyToken, async (req, res) => {
 
     if (!existingTestimony) {
       return res.status(404).json({ error: 'Testimony not found' });
-    }
-
-    // Check if the user is the owner or an admin
-    if (existingTestimony.userId !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Access forbidden' });
     }
 
     await existingTestimony.destroy();
